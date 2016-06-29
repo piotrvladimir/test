@@ -1,0 +1,14 @@
+.albumFullBlock {
+    min-height: 250px !important;
+}
+.albumFullImage {
+    position: absolute;
+    -webkit-filter: grayscale(50%);
+    filter: grayscale(50%);
+    opacity: 0.5;
+}
+.albumFullImage:hover, .albumFullImageFirst:hover {
+    -webkit-filter: grayscale(0%);
+    filter: grayscale(0%);
+    opacity: 1;
+}

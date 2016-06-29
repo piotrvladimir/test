@@ -1,0 +1,7 @@
+gallery_homepage:
+    path:     /
+    defaults: { _controller: GalleryBundle:Gallery:index }
+
+gallery_homepage_load_images:
+    path:     /getImages
+    defaults: { _controller: GalleryBundle:Gallery:getAlbumList }

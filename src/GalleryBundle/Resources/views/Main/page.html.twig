@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {% stylesheets '@GalleryBundle/Resources/public/css/*' filter='cssrewrite' %}
+        <link rel="stylesheet" href="{{ asset_url }}" />
+    {% endstylesheets %}
+{% endblock %}
+
+{% block gallery %}
+    <div class="col-lg-12" id="albumPlace"></div>
+{% endblock %}
+
+{% block javascripts %}
+    {% javascripts '@GalleryBundle/Resources/public/js/*' %}
+        <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+
+        <script type="text/javascript">
+            $( document ).ready(function() {
+                $.ajax('{{ path('gallery_homepage_load_images') }}', {
+                    success: function(data) {
+                        if (data.small != undefined) {
+                            $('#albumPlace').append('<h2>Albums with less than 10 photos</h2>');
+                            var divId = 0;
+                            var place = '';
+                            $.each(data.small, function(index, value){
+                                if (value.id != divId) {
+                                    divId = value.id;
+                                    place = 'album'+divId;
+                                    $('#albumPlace').append('<div class="col-lg-12 albumFullBlock" id="'+place+'"><p>'+value.name+'</p></div>');
+                                }
+                                $('#'+place).append('<img class="albumFullImage" src="/bundles/gallery/img/'+value.url+'" width="300" height="200">');
+                                $($('#'+place).children().last()).attr('style', 'left: '+((100*index)+15)+'px;')
+                            })
+                        }
+                        if (data.big != undefined) {
+                            $('#albumPlace').append('<h2>Albums with more than 10 photos</h2>');
+                            $.each(data.big, function(index, value){
+                                $('#albumPlace').append('<div class="col-lg-3"><p>'+value.name+'</p><img class="albumFullImage" src="/bundles/gallery/img/'+value.url+'" width="300" height="200"></div>');
+                            })
+                        }
+                    },
+                    error: function() {
+                        console.log('something wrong');
+                    }
+                }, 'json');
+            })
+        </script>
+{% endblock %}
