@@ -7,7 +7,57 @@
 {% endblock %}
 
 {% block gallery %}
-    <div class="col-lg-12" id="albumPlace"></div>
+    {% if images %}
+        <div class="bodyBlock panel panel-info">
+            <div class="panel-heading">
+                {{ title }}
+            </div>
+            <div class="panel-body">
+                {% if emptyImages %}
+                    <div class="col-lg-12">
+                        <h4>Album is empty =(</h4>
+                    </div>
+                {% else %}
+                    <div class="col-lg-12">
+                    {% for image in images %}
+                        <div class="col-lg-3 albumDetailsBlock">
+                            <a href="{{ asset('/bundles/gallery/img/') }}{{ image.url }}" data-lightbox="gallery" data-title="{{ image.name }}">
+                                <img class="img-rounded img-responsive" src="{{ asset('/bundles/gallery/img/') }}thumb_{{ image.url }}" alt="{{ image.name }}">
+                            </a>
+                        </div>
+                        {% if loop.index % 4 == 0 %}
+                    </div>
+                    <div class="col-lg-12">
+                        {% endif %}
+                    {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="panel-footer">
+                {{ knp_pagination_render(images) }}
+                <span class="{% if images|length < 10 %}panelBottomText{% else %}panelPagingBottomText{% endif %}">
+                    {{ images.getTotalItemCount }} total images
+                </span>
+                <a class="{% if images|length < 10 %}panelBottomLink{% else %}panelPagingBottomLink{% endif %}" href="{{ url('gallery_homepage') }}">Back to main</a>
+            </div>
+        </div>
+    {% else %}
+        <div class="bodyBlock">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    Albums with less than 10 photos
+                </div>
+                <div class="panel-body" id="smallAlbumPlace"></div>
+            </div>
+
+            <div class="panel panel-info" style="height:auto;">
+                <div class="panel-heading">
+                    Albums with more than 10 photos
+                </div>
+                <div class="panel-body" id="bigAlbumPlace"></div>
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}
 
 {% block javascripts %}
@@ -15,28 +65,56 @@
         <script src="{{ asset_url }}"></script>
     {% endjavascripts %}
 
+    {% if not images %}
         <script type="text/javascript">
+        // data from twig to js
+            var pagePath = "{{ path('gallery_album_details') }}";
+            var imagePath = "{{ asset('/bundles/gallery/img/') }}";
+
+        //for album with less than 10 images
+            // div
+                var lessDiv1 = '<div class="col-lg-12 albumFullBlock" id="';
+                var lessDiv2 = '"><p><a href="';
+                var lessDiv3 = '/';
+                var lessDiv4 = '">';
+                var lessDiv5 = '</a></p></div>';
+            // image
+                var lessImg1 = '<a class="albumFullImage" href="';
+                var lessImg2 = '" data-lightbox="gallery';
+                var lessImg3 = '" data-title="';
+                var lessImg4 = '"><img class="img-responsive" src="/bundles/gallery/img/thumb_';
+                var lessImg5 = '" alt="';
+                var lessImg6 = '"></a>';
+
+        //for album with more than 10 images
+            var bigBlock1 = '<div class="col-lg-2 albumCoverBlock"><a href="';
+            var bigBlock2 = '/';
+            var bigBlock3 = '"><p>';
+            var bigBlock4 = '</p><img class="img-thumbnail albumCoverImage" src="/bundles/gallery/img/';
+            var bigBlock5 = '"></a></div>';
+
             $( document ).ready(function() {
                 $.ajax('{{ path('gallery_homepage_load_images') }}', {
                     success: function(data) {
                         if (data.small != undefined) {
-                            $('#albumPlace').append('<h2>Albums with less than 10 photos</h2>');
                             var divId = 0;
                             var place = '';
+                        // creating small albums on page
                             $.each(data.small, function(index, value){
                                 if (value.id != divId) {
                                     divId = value.id;
                                     place = 'album'+divId;
-                                    $('#albumPlace').append('<div class="col-lg-12 albumFullBlock" id="'+place+'"><p>'+value.name+'</p></div>');
+                                    $('#smallAlbumPlace').append(lessDiv1+place+lessDiv2+pagePath+lessDiv3+value.id+lessDiv4+value.name+lessDiv5);
                                 }
-                                $('#'+place).append('<img class="albumFullImage" src="/bundles/gallery/img/'+value.url+'" width="300" height="200">');
-                                $($('#'+place).children().last()).attr('style', 'left: '+((100*index)+15)+'px;')
+                                $('#'+place).append(lessImg1+imagePath+value.url+lessImg2+divId+lessImg3+value.title+lessImg4+value.url+lessImg5+value.title+lessImg6);
+                            // shift images for stack effect
+                                $($('#'+place).children('a').last()).attr('style', 'left: '+((50*index)+15)+'px;')
                             })
                         }
                         if (data.big != undefined) {
-                            $('#albumPlace').append('<h2>Albums with more than 10 photos</h2>');
+                        // creating big albums on page
                             $.each(data.big, function(index, value){
-                                $('#albumPlace').append('<div class="col-lg-3"><p>'+value.name+'</p><img class="albumFullImage" src="/bundles/gallery/img/'+value.url+'" width="300" height="200"></div>');
+                                $('#bigAlbumPlace').append(bigBlock1+pagePath+bigBlock2+value.id+bigBlock3+value.name+bigBlock4+value.url+bigBlock5);
                             })
                         }
                     },
@@ -46,4 +124,5 @@
                 }, 'json');
             })
         </script>
+    {% endif %}
 {% endblock %}

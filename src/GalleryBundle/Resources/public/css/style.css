@@ -1,14 +1,63 @@
 .albumFullBlock {
-    min-height: 250px !important;
+    min-height: 150px !important;
 }
-.albumFullImage {
+.albumFullImage, .albumCoverImage {
     position: absolute;
+    display: inline-block;
     -webkit-filter: grayscale(50%);
     filter: grayscale(50%);
     opacity: 0.5;
 }
-.albumFullImage:hover, .albumFullImageFirst:hover {
+.albumFullImage img {
+    height: 100px;
+}
+.albumFullImage:hover {
     -webkit-filter: grayscale(0%);
     filter: grayscale(0%);
     opacity: 1;
+}
+.albumCoverBlock a, .albumFullBlock a {
+    text-decoration: none;
+    color: #222222;
+}
+.albumCoverBlock a:hover, .albumCoverBlock a:focus, .albumFullBlock a:hover, .albumFullBlock a:focus {
+    text-decoration: none;
+    color: darkcyan;
+}
+#bigAlbumPlace {
+    min-height: 210px;
+}
+.albumDetailsBlock {
+    max-height: 200px;
+    margin: 10px 0;
+    overflow: hidden;
+}
+.albumDetailsBlock img {
+    height: 200px;
+}
+.panelPagingBottomText {
+    position: relative;
+    bottom: 10px;
+    left: 23.5%;
+    font-size: 25px;
+}
+.panelPagingBottomLink {
+    position: relative;
+    bottom: 10px;
+    left: 57%;
+}
+.panelBottomText {
+    position: relative;
+    left: 45%;
+    font-size: 25px;
+}
+.panelBottomLink {
+    position: relative;
+    left: 80%;
+}
+.pagination {
+    margin: 0 !important;
+}
+.bodyBlock {
+    margin: 30px;
 }

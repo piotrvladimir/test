@@ -5,3 +5,11 @@ gallery_homepage:
 gallery_homepage_load_images:
     path:     /getImages
     defaults: { _controller: GalleryBundle:Gallery:getAlbumList }
+
+gallery_album_details:
+    path:     /album/{id}
+    defaults: { _controller: GalleryBundle:Gallery:getAlbumDetails, id: 0 }
+
+gallery_album_details_page:
+    path:     /album/{id}/page/{page}
+    defaults: { _controller: GalleryBundle:Gallery:getAlbumDetails, id: 0, page: 1 }
